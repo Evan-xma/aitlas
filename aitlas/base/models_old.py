@@ -21,10 +21,8 @@ from .config import Configurable
 from .datasets import BaseDataset
 from .schemas import BaseModelSchema
 
-import sys
 
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", stream=sys.stdout)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 
 class EarlyStopping:
@@ -61,7 +59,7 @@ class EarlyStopping:
             )
             if self.counter >= self.patience:
                 logging.info("INFO: Early stopping")
-                self.early_stop = False
+                self.early_stop = True
 
 
 class BaseModel(nn.Module, Configurable):
@@ -117,7 +115,6 @@ class BaseModel(nn.Module, Configurable):
         resume_model: str = None,
         val_dataset: BaseDataset = None,
         run_id: str = None,
-        train_subset_size: int = None,
         **kwargs,
     ):
         """Main method to train the model. It trains the model for the specified number of epochs and saves the model after every save_epochs. It also logs the loss after every iterations_log.
@@ -166,11 +163,7 @@ class BaseModel(nn.Module, Configurable):
         self.writer = SummaryWriter(os.path.join(model_directory, run_id))
 
         # get data loaders
-        if train_subset_size is not None:
-            train_loader = dataset.sub_dataloader(train_subset_size)
-        else:
-            train_loader = dataset.dataloader()
-
+        train_loader = dataset.dataloader()
         val_loader = None
         if val_dataset:
             val_loader = val_dataset.dataloader()
@@ -847,51 +840,5 @@ class BaseModel(nn.Module, Configurable):
             resume_model=resume_model,
             val_dataset=val_dataset,
             run_id=run_id,
-            **kwargs,
-        )
-
-    def train_and_evaluate_model_subset(
-        self,
-        train_dataset: BaseDataset,
-        epochs: int = 100,
-        model_directory: str = None,
-        save_epochs: int = 10,
-        iterations_log: int = 100,
-        resume_model: str = None,
-        val_dataset: BaseDataset = None,
-        run_id: str = None,
-        train_subset_size = None,
-        **kwargs,
-    ):
-        """Method that trains and evaluates the model.
-
-        :param train_dataset: Dataset to train the model
-        :type train_dataset: BaseDataset
-        :param epochs: Number of epochs for training, defaults to 100
-        :type epochs: int, optional
-        :param model_directory: Model directory where the model checkpoints will be saved, defaults to None
-        :type model_directory: str, optional
-        :param save_epochs: Number of epochs to save a checkpoint of the model, defaults to 10
-        :type save_epochs: int, optional
-        :param iterations_log: Number of iterations to pass before logging the system state, defaults to 100
-        :type iterations_log: int, optional
-        :param resume_model: Boolean indicating whether to resume an already traind model or not, defaults to None
-        :type resume_model: str, optional
-        :param val_dataset: Dataset used for validation, defaults to None
-        :type val_dataset: BaseDataset, optional
-        :param run_id: Run id to identify the experiment, defaults to None
-        :type run_id: str, optional
-        :return: Loss of the model
-        """
-        return self.fit(
-            dataset=train_dataset,
-            epochs=epochs,
-            model_directory=model_directory,
-            save_epochs=save_epochs,
-            iterations_log=iterations_log,
-            resume_model=resume_model,
-            val_dataset=val_dataset,
-            run_id=run_id,
-            train_subset_size= train_subset_size,
             **kwargs,
         )

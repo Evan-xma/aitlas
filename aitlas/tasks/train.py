@@ -6,9 +6,10 @@ import numpy as np
 
 from ..base import BaseDataset, BaseModel, BaseTask
 from .schemas import OptimizeTaskSchema, TrainAndEvaluateTaskSchema, TrainTaskSchema
+from datetime import datetime
+import sys
 
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",stream=sys.stdout)
 
 
 class TrainTask(BaseTask):

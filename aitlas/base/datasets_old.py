@@ -2,14 +2,14 @@
 
 This is the base class for all datasets. All datasets should subclass it. 
 """
-from torch.utils.data import Subset
+
 import torch
 from torch.utils.data import Dataset
 
 from .config import Configurable
 from .schemas import BaseDatasetSchema
 from .transforms import load_transforms
-import random
+
 
 class BaseDataset(Dataset, Configurable):
     """This class represents a basic dataset for machine learning tasks. It is a
@@ -71,26 +71,6 @@ class BaseDataset(Dataset, Configurable):
     def prepare(self):
         """Implement if something needs to happen to the dataset after object creation"""
         return True
-
-    def sub_dataloader(self, subset_size = 100):
-        dataset_length = len(self)
-        if subset_size > dataset_length:
-            raise ValueError("subset_size is larger than the total size of the dataset")
-        
-        # For a random subset
-        indices = random.sample(range(dataset_length), subset_size)
-
-        subset = Subset(self, indices)
-        """Create and return a dataloader for the dataset"""
-        return torch.utils.data.DataLoader(
-            subset,
-            batch_size=self.batch_size,
-            shuffle=self.shuffle,
-            num_workers=self.num_workers,
-            pin_memory=self.pin_memory,
-            # drop_last=True,
-        )
-
 
     def dataloader(self):
         """Create and return a dataloader for the dataset"""
