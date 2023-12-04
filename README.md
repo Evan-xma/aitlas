@@ -24,8 +24,6 @@ pip install .
 ```
 in the folder where you cloned the repo.
 
----
-
 
 ---
 # Citation
