@@ -4,6 +4,7 @@ The AiTLAS toolbox (Artificial Intelligence Toolbox for Earth Observation) inclu
 # Installation
 
 The best way to install `aitlas`, is if you create a virtual environment and install the  requirements with `pip`. Here are the steps:
+- Clone this repo.
 - Go to the folder where you cloned the repo.
 - Create a virtual environment
 ```bash
